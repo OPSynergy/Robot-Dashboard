@@ -684,6 +684,25 @@
   function RobotSetupRoute({ logout }) {
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
     const [dashboardTitle, setDashboardTitle] = useState('Robot Setup');
+    const [robotCount, setRobotCount] = useState(0);
+
+    // Fetch robot count from backend
+    useEffect(() => {
+      const fetchRobotCount = async () => {
+        try {
+          const res = await fetch('http://localhost:8000/robot-setup/count');
+          if (!res.ok) throw new Error('Failed to fetch count');
+          const data = await res.json();
+          setRobotCount(data.count || 0);
+        } catch {
+          setRobotCount(0);
+        }
+      };
+      fetchRobotCount();
+      const interval = setInterval(fetchRobotCount, 5000);
+      return () => clearInterval(interval);
+    }, []);
+
     return (
       <div className="dashboard-root">
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} onSectionChange={setDashboardTitle} />
@@ -693,7 +712,7 @@
             setIsSidebarOpen={setIsSidebarOpen}
             openLogo={openLogo}
             connectionStatus={"connected"}
-            robotCount={0}
+            robotCount={robotCount}
             title={dashboardTitle}
             onEStop={() => {}}
           />
