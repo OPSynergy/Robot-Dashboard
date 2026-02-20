@@ -147,6 +147,7 @@
             if (eStopRef.current) return;
             try {
               const data = JSON.parse(event.data);
+              console.log('WebSocket data received:', data);
               setWsData(data);
             } catch (error) {
               console.warn('Error parsing WebSocket data:', error);
@@ -328,13 +329,12 @@
             <Route path="/analytics" element={<AnalyticsDashboard />} />
             <Route path="/robot-control" element={
               <div className="dashboard-content robot-control">
-                <RobotGallery speed={wsData.speed} />
+                <RobotGallery robots={wsData.robots} />
                 <div className="right-column-content">
                   <RobotMap 
                     mapType={dashboardMapType}
                     onAddGoal={handleAddGoal} 
-                    robotPosition={robotPosition} 
-                    setRobotPosition={setRobotPosition}
+                    robotPositions={wsData.robots}
                     wsData={wsData}
                     isWsConnected={isWsConnected}
                     waypointMarkers={waypointCoords}
@@ -346,8 +346,8 @@
                       setWaypointCoords(coords => [...coords, pt]);
                     }) : undefined}
                     waypointMarkersColor={waypointsCovered ? 'green' : 'grey'}
-                    robots={enabledRobots}  // Changed from robots={[]}
-                    showMultipleRobots={false}
+                    robots={enabledRobots}
+                    showMultipleRobots={true}
                   />
                   <GoalInterface 
                     goals={wsData.robots} 
@@ -358,20 +358,20 @@
               </div>
             } />
             <Route path="/maps" element={<MapsHome />} />
-            <Route path="/maps/storage" element={<RobotMap mapType="storage" onAddGoal={handleAddGoal} robotPosition={robotPosition} setRobotPosition={setRobotPosition} wsData={wsData} isWsConnected={isWsConnected} waypointMarkers={waypointCoords} onMapClick={showWaypointEditor ? ((pt) => {
+            <Route path="/maps/storage" element={<RobotMap mapType="storage" onAddGoal={handleAddGoal} robotPositions={wsData.robots} wsData={wsData} isWsConnected={isWsConnected} waypointMarkers={waypointCoords} onMapClick={showWaypointEditor ? ((pt) => {
               if (waypointCoords.length >= pointsCount) {
                 alert('All points are marked. No points are left.');
                 return;
               }
               setWaypointCoords(coords => [...coords, pt]);
-            }) : undefined} robots={[]} showMultipleRobots={false} />} />
-            <Route path="/maps/delivery" element={<RobotMap mapType="delivery" onAddGoal={handleAddGoal} robotPosition={robotPosition} setRobotPosition={setRobotPosition} wsData={wsData} isWsConnected={isWsConnected} waypointMarkers={waypointCoords} onMapClick={showWaypointEditor ? ((pt) => {
+            }) : undefined} robots={enabledRobots} showMultipleRobots={true} />} />
+            <Route path="/maps/delivery" element={<RobotMap mapType="delivery" onAddGoal={handleAddGoal} robotPositions={wsData.robots} wsData={wsData} isWsConnected={isWsConnected} waypointMarkers={waypointCoords} onMapClick={showWaypointEditor ? ((pt) => {
               if (waypointCoords.length >= pointsCount) {
                 alert('All points are marked. No points are left.');
                 return;
               }
               setWaypointCoords(coords => [...coords, pt]);
-            }) : undefined} robots={[]} showMultipleRobots={false} />} />
+            }) : undefined} robots={enabledRobots} showMultipleRobots={true} />} />
             <Route path="/fleet-management" element={
               <div className="dashboard-content fleet-management">
                 <FleetManagement />
@@ -379,8 +379,7 @@
                   <RobotMap 
                     mapType={dashboardMapType}
                     onAddGoal={handleAddGoal} 
-                    robotPosition={robotPosition} 
-                    setRobotPosition={setRobotPosition}
+                    robotPositions={wsData.robots}
                     wsData={wsData}
                     isWsConnected={isWsConnected}
                     waypointMarkers={waypointCoords}
@@ -392,8 +391,8 @@
                       setWaypointCoords(coords => [...coords, pt]);
                     }) : undefined}
                     waypointMarkersColor={waypointsCovered ? 'green' : 'grey'}
-                    robots={enabledRobots}  // Changed from robots={[]}
-                    showMultipleRobots={false}
+                    robots={enabledRobots}
+                    showMultipleRobots={true}
                   />
                   <GoalInterface 
                     goals={wsData.robots} 
@@ -602,8 +601,7 @@
                   <RobotMap 
                     mapType={dashboardMapType}
                     onAddGoal={handleAddGoal} 
-                    robotPosition={robotPosition} 
-                    setRobotPosition={setRobotPosition}
+                    robotPositions={wsData.robots}
                     wsData={wsData}
                     isWsConnected={isWsConnected}
                     waypointMarkers={waypointCoords}
@@ -615,8 +613,8 @@
                       setWaypointCoords(coords => [...coords, pt]);
                     }) : undefined}
                     waypointMarkersColor={waypointsCovered ? 'green' : 'grey'}
-                    robots={[]}
-                    showMultipleRobots={false}
+                    robots={enabledRobots}
+                    showMultipleRobots={true}
                   />
                   <GoalInterface 
                     goals={wsData.robots} 

@@ -134,7 +134,7 @@ connected_clients: List[WebSocket] = []
 def get_or_create_robot(robot_id):
     if robot_id not in robot_state["robots"]:
         robot_state["robots"][robot_id] = {
-            "position": [100, 100],
+            "position": [150 + len(robot_state["robots"]) * 50, 200 + len(robot_state["robots"]) * 30],
             "orientation": 0,
             "battery": 100,
             "currentTask": "Idle",
@@ -146,6 +146,32 @@ def get_or_create_robot(robot_id):
     if "speed" not in robot_state["robots"][robot_id]:
         robot_state["robots"][robot_id]["speed"] = 0.5
     return robot_state["robots"][robot_id]
+
+def sync_robots_from_db():
+    """Sync enabled robots from database to robot_state"""
+    try:
+        conn = sqlite3.connect('robot_setup.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT robot_id FROM robot_setup WHERE enabled = 1')
+        rows = cursor.fetchall()
+        conn.close()
+        
+        for idx, row in enumerate(rows):
+            robot_id = row[0]
+            if robot_id not in robot_state["robots"]:
+                robot_state["robots"][robot_id] = {
+                    "position": [150 + idx * 60, 200 + idx * 40],
+                    "orientation": 0,
+                    "battery": 100,
+                    "currentTask": "Idle",
+                    "lastUpdated": datetime.now().strftime("%H:%M:%S"),
+                    "goals": [],
+                    "target_goal": None,
+                    "speed": 0.5
+                }
+        print(f"Synced {len(rows)} robots from database to robot_state")
+    except Exception as e:
+        print(f"Error syncing robots from database: {e}")
 
 def get_next_goal(robot):
     """Get the next queued goal for a specific robot"""
@@ -302,6 +328,9 @@ async def startup_event():
         ensure_enabled_column()
         print("Database initialized successfully")
         
+        # Sync robots from database to robot_state
+        sync_robots_from_db()
+        
         # Start background tasks
         asyncio.create_task(robot_movement_task())
         asyncio.create_task(robot_publisher_task())
@@ -386,8 +415,18 @@ def get_goals():
 @app.post("/command")
 async def send_command(command: Command):
     try:
-        # For now, apply command to all robots or add robot_id parameter
-        for robot_id, robot in robot_state["robots"].items():
+        target_robot_id = command.parameters.get("robot_id")
+        
+        if target_robot_id:
+            # Apply command to specific robot
+            if target_robot_id not in robot_state["robots"]:
+                raise HTTPException(status_code=404, detail=f"Robot {target_robot_id} not found")
+            robots_to_update = [(target_robot_id, robot_state["robots"][target_robot_id])]
+        else:
+            # Apply command to all robots (fallback behavior)
+            robots_to_update = list(robot_state["robots"].items())
+        
+        for robot_id, robot in robots_to_update:
             if command.type == "move":
                 robot["position"][0] += command.parameters.get("x", 0)
                 robot["position"][1] += command.parameters.get("y", 0)
@@ -494,6 +533,12 @@ async def add_robot_setup(robot: RobotSetupModel):
         ))
         conn.commit()
         conn.close()
+        
+        # Add robot to robot_state if enabled
+        if robot.enabled:
+            get_or_create_robot(robot.robot_id)
+            await broadcast_state()
+        
         return {"status": "success", "message": f"Robot {robot.robot_id} added successfully"}
     except sqlite3.IntegrityError:
         raise HTTPException(status_code=400, detail="Robot ID already exists")
@@ -575,7 +620,15 @@ async def delete_robot(robot_id: str = Path(...)):
             raise HTTPException(status_code=404, detail="Robot not found")
         conn.commit()
         conn.close()
+        
+        # Remove from robot_state
+        if robot_id in robot_state["robots"]:
+            del robot_state["robots"][robot_id]
+        await broadcast_state()
+        
         return {"status": "success", "message": f"Robot {robot_id} deleted successfully"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -592,13 +645,21 @@ async def toggle_robot(robot_id: str):
         
         current_enabled = result[0]
         new_enabled = 0 if current_enabled else 1
-        
         cursor.execute('UPDATE robot_setup SET enabled=? WHERE robot_id=?', (new_enabled, robot_id))
         conn.commit()
         conn.close()
         
-        status_text = "enabled" if new_enabled else "disabled"
-        return {"status": "success", "message": f"Robot {robot_id} {status_text} successfully"}
+        # Update robot_state
+        if new_enabled:
+            get_or_create_robot(robot_id)
+        else:
+            if robot_id in robot_state["robots"]:
+                del robot_state["robots"][robot_id]
+        
+        await broadcast_state()
+        return {"status": "success", "message": f"Robot {robot_id} toggled successfully", "enabled": bool(new_enabled)}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -17,7 +17,9 @@ const RobotMap = ({ robots = [], robotPositions = {}, showMultipleRobots = false
   const assignmentTimeoutRef = useRef(null);
 
   // Debug logging
-  console.log('RobotMap props:', { robots, showMultipleRobots });
+  console.log('RobotMap props:', { robots, robotPositions, showMultipleRobots });
+  console.log('Robot IDs in robots array:', robots?.map(r => r.id));
+  console.log('Robot IDs in robotPositions:', Object.keys(robotPositions || {}));
 
   let mapImage = storageMap;
   if (mapType === 'delivery') mapImage = deliveryMap;
@@ -234,25 +236,48 @@ const RobotMap = ({ robots = [], robotPositions = {}, showMultipleRobots = false
           ))}
           {/* Robot position markers (avatars) */}
           {robots && robots.length > 0 && robots.map((robot) => {
-            const robotState = robotPositions[robot.id];
-            if (!robotState) return null;
+            const robotData = robotPositions ? robotPositions[robot.id] : null;
+            console.log(`Rendering robot ${robot.id}:`, robotData);
+            if (!robotData || !robotData.position) {
+              console.log(`Skipping robot ${robot.id} - no position data`);
+              return null;
+            }
             return (
               <div
                 key={robot.id}
                 style={{
                   position: 'absolute',
-                  left: robotState.position[0],
-                  top: robotState.position[1],
-                  width: 28,
-                  height: 28,
+                  left: robotData.position[0],
+                  top: robotData.position[1],
+                  width: 48,
+                  height: 48,
                   transform: 'translate(-50%, -50%)',
                   zIndex: 3,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
+                title={`${robot.name || robot.id} - ${robotData.currentTask || 'Idle'}`}
               >
-                <img src={robot.icon} alt={robot.name} style={{ width: 28, height: 28 }} />
+                {robot.icon ? (
+                  <img src={robot.icon} alt={robot.name} style={{ width: 48, height: 48, boxShadow: '0 2px 6px rgba(0,0,0,0.3)' }} />
+                ) : (
+                  <div style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: '50%',
+                    background: '#3498db',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    fontSize: '18px',
+                    fontWeight: 'bold'
+                  }}>
+                    {(robot.name || robot.id || 'R').charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
             );
           })}
