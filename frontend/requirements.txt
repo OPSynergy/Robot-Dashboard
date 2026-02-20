@@ -1,0 +1,9 @@
+# Backend Python Dependencies
+# File: backend/requirements.txt
+
+paho-mqtt==1.6.1
+python-dotenv==1.0.0
+psutil==5.9.5
+random2==1.0.1
+threading2==0.1.2
+time-machine==2.10.0

@@ -1,0 +1,370 @@
+/* Dashboard root container - ADD THIS to your main dashboard component */
+.dashboard-root {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar container - This will work with your JSX inline styles */
+.sidebar-container {
+  height: 100vh;
+  background-color: #111827;
+  border-right: 1px solid #e5e7eb;  
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  width: 260px !important;  /* Reduced from 300px */
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* Override inline widths for normalized sizing */
+.sidebar-container {
+  width: 300px !important;  /* Normalized expanded width */
+}
+
+.sidebar-container.collapsed {
+  width: 70px !important;   /* Normalized collapsed width */
+}
+
+/* Sidebar header styling */
+.sidebar-header {
+  padding: 12px 16px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 70px;  /* Reduced from your current setup */
+}
+
+/* Logo styling for expanded state */
+.sidebar-logo-expanded {
+  height: 35px !important;        /* Reduced from 40px */
+  width: auto !important;         
+  max-width: 180px !important;    /* Reduced from 200px */
+  transition: all 0.3s;
+  opacity: 1;
+  transform: scale(1);
+}
+/* Logo styling for collapsed state */
+.sidebar-logo-collapsed {
+  height: 50px !important;        /* Slightly smaller than your 60px */
+  width: auto !important;
+  max-width: 50px !important;     /* Constrain for collapsed state */
+  transition: all 0.3s;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Collapse/expand button */
+.sidebar-toggle-btn {
+  padding: 4px !important;
+  border-radius: 6px !important;
+  background-color: #f9fafb !important;
+  border: none !important;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 32px !important;         /* Smaller button */
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-left: 8px !important;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: #e5e7eb !important;
+}
+
+/* Navigation container */
+.sidebar-nav {
+  flex: 1;
+  padding: 0 8px;     /* Reduced padding */
+  overflow-y: auto;
+}
+
+/* Navigation items */
+.sidebar-item {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 12px !important;   /* Reduced from your 12px */
+  margin: 6px 0 !important;       /* Reduced from your 10px */
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: background 0.2s, color 0.2s !important;
+  font-weight: 600 !important;    /* Reduced from 700 */
+  font-size: 0.95rem !important;  /* Reduced from 1.15rem */
+}
+
+/* Icon container */
+.sidebar-item-icon {
+  width: 36px !important;         /* Reduced from 48px */
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  margin-right: auto !important;
+  transition: background 0.2s !important;
+}
+
+/* Icon image */
+.sidebar-item-icon img {
+  width: 22px !important;         /* Reduced from 32px */
+  height: 22px !important;
+  display: block !important;
+}
+
+/* Text styling */
+.sidebar-item-text {
+  font-size: inherit !important;
+  transition: opacity 0.3s !important;
+}
+
+/* Expanded state text */
+.sidebar-expanded .sidebar-item-text {
+  margin-left: 12px !important;   /* Reduced from 16px */
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  width: auto !important;
+  opacity: 1 !important;
+}
+
+/* Collapsed state text */
+.sidebar-collapsed .sidebar-item-text {
+  margin-left: 0 !important;
+  width: 0 !important;
+  opacity: 0 !important;
+}
+
+/* System status section */
+.sidebar-footer {
+  border-top: 1px solid #e5e7eb;
+  padding: 8px 12px;              /* Reduced padding */
+}
+
+.system-status h4 {
+  font-size: 11px !important;     /* Smaller font */
+  font-weight: 600 !important;
+  color: #374151 !important;
+  margin: 0 0 6px 0 !important;   /* Reduced margin */
+}
+
+.status-indicator {
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 3px !important;  /* Reduced margin */
+}
+
+.status-dot {
+  width: 6px !important;          /* Smaller dots */
+  height: 6px !important;
+  border-radius: 50% !important;
+  background-color: #10b981 !important;
+  margin-right: 6px !important;   /* Reduced margin */
+}
+
+.status-text {
+  font-size: 10px !important;     /* Smaller text */
+  color: #6b7280 !important;
+}
+
+/* User profile section */
+.user-profile {
+  border-top: 1px solid #e5e7eb !important;
+  padding: 8px !important;        /* Reduced padding */
+  display: flex !important;
+  align-items: center !important;
+}
+
+.user-avatar {
+  width: 32px !important;         /* Reduced from 40px */
+  height: 32px !important;
+  border-radius: 6px !important;  /* Smaller radius */
+  background-color: #c7d2fe !important;
+  color: #3730a3 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: bold !important;
+  font-size: 12px !important;     /* Smaller font */
+}
+
+.user-info {
+  margin-left: 8px !important;    /* Reduced margin */
+  flex: 1 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.user-name {
+  font-size: 12px !important;     /* Smaller font */
+  font-weight: 600 !important;
+  color: #111827 !important;
+  line-height: 1.2 !important;
+}
+
+.user-role {
+  font-size: 10px !important;     /* Smaller font */
+  color: #6b7280 !important;
+}
+
+/* Main content area - ADD THIS for your Robot Map container */
+.dashboard-main {
+  flex: 1;
+  height: 100vh;
+  overflow: auto;
+  background-color: #f8f9fa;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .sidebar-container {
+    width: 200px !important;  /* Reduced from previous value */
+  }
+
+  .sidebar-container.collapsed {
+    width: 60px !important;
+  }
+  
+  .sidebar-logo-expanded {
+    height: 35px !important;
+    max-width: 160px !important;
+  }
+  
+  .sidebar-logo-collapsed {
+    height: 45px !important;
+    max-width: 45px !important;
+  }
+  
+  .sidebar-item {
+  display: flex !important;
+  align-items: center !important;
+  padding: 6px 6px !important;
+  margin: 18px 0 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: background 0.2s, color 0.2s !important;
+  font-weight: 700 !important;
+  font-size: 1.15rem !important;
+  position: relative !important; /* Add for tooltip positioning */
+}
+  
+  .sidebar-item-icon {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+  
+  .sidebar-item-icon img {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .sidebar-item:hover {
+    background: transparent !important; /* Override any hover background */
+  }
+
+  .sidebar-tooltip {
+    position: absolute;
+    left: 110%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #222;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    z-index: 9999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    pointer-events: none; /* Prevent tooltip from interfering with clicks */
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-container {
+    width: 180px !important;
+  }
+  
+  .sidebar-container.collapsed {
+    width: 55px !important;
+  }
+  
+  .sidebar-header {
+    padding: 8px 12px 6px !important;
+    min-height: 60px !important;
+  }
+  
+  .sidebar-logo-expanded {
+    height: 30px !important;
+    max-width: 140px !important;
+  }
+  
+  .sidebar-logo-collapsed {
+    height: 40px !important;
+    max-width: 40px !important;
+  }
+  
+  .sidebar-toggle-btn {
+    width: 28px !important;
+    height: 28px !important;
+    padding: 3px !important;
+  }
+  
+  .sidebar-item {
+    padding: 5px 8px !important;
+    margin: 4px 0 !important;
+    font-size: 0.85rem !important;
+  }
+
+  .sidebar-item.active {
+    background: #e6e1fe !important;
+    color: #000 !important;
+  }
+  
+  .sidebar-item-icon {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    background: #fff !important;
+    margin-right: auto !important;
+    transition: none !important; /* Remove transition effects */
+  }
+
+  .sidebar-item-icon:hover {
+    background: #fff !important; /* Keep white background always */
+  }
+  
+  .sidebar-item-icon img {
+    width: 20px !important;
+    height: 20px !important;
+    display: block !important;
+  }
+  
+  .user-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-container {
+    width: 160px !important;
+  }
+  
+  .sidebar-container.collapsed {
+    width: 50px !important;
+  }
+}

@@ -1,0 +1,283 @@
+.robot-map {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  padding: 16px;
+  margin-left: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  margin-top: 8px;
+  display: flex;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.map-grid {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.warehouse-map-img {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.07rem 0.27rem rgba(0,0,0,0.04);
+  background: #f8f9fa;
+  display: block;
+  cursor: crosshair;
+}
+
+.robot-marker {
+  position: absolute;
+  font-size: 1.3rem;
+  color: blue;
+  pointer-events: none; /* Prevents the marker from interfering with clicks */
+  z-index: 1;
+  font-weight: bold;
+  text-shadow: 0.07rem 0.07rem 0.13rem rgba(0,0,0,0.3);
+}
+
+.robot-marker.home {
+  border: 2px solid #4caf50;
+  background: #e0ffe0;
+  box-shadow: 0 0 8px #4caf50;
+}
+
+.map-controls {
+  position: fixed;
+  top: 0.7rem;
+  right: 0.7rem;
+}
+
+.clicked-point {
+  position: absolute;
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: #ff0000;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none; /* Prevents the dot from interfering with future clicks */
+  box-shadow: 0 0 0.7rem rgba(255, 0, 0, 0.5);
+  border: 0.13rem solid #ffffff;
+  animation: pulse 2s infinite;
+}
+
+/* Pulsing animation for the red dot */
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Connection status styles */
+.status-connected {
+  color: #28a745;
+}
+
+.status-disconnected {
+  color: #dc3545;
+}
+
+.robot-map h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #222c34;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .robot-map {
+    padding-left: 120px; /* Reduce padding on smaller screens */
+    padding-right: 15px;
+  }
+  .map-container {
+    max-width: calc(100vw - 140px);
+  }
+  .map-controls {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+  .robot-map h2 {
+    font-size: 1rem;
+    margin-bottom: 0.7rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .robot-map {
+    padding-left: 80px; /* Further reduce on mobile */
+    padding-right: 10px;
+  }
+  .map-container {
+    max-width: calc(100vw - 90px);
+  }
+  .map-controls {
+    top: 0.2rem;
+    right: 0.2rem;
+  }
+  .robot-map h2 {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+}
+
+.home-dot {
+  position: absolute;
+  width: 1.1rem;
+  height: 1.1rem;
+  background-color: #4caf50;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 8px #4caf50;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.robot-map-assignment-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(44, 62, 80, 0.55);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.robot-map-assignment-instructions {
+  background: #fff;
+  color: #232428;
+  padding: 2rem 2.5rem;
+  border-radius: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  text-align: center;
+  z-index: 11;
+}
+
+.robot-marker.assignment-highlight {
+  border: 3px solid #00c853;
+  box-shadow: 0 0 16px #00c853, 0 0 4px #fff;
+  background: #eafff3;
+  z-index: 12;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+
+.robot-marker.assignment-hop {
+  animation: robot-hop 0.5s cubic-bezier(0.4, 0.8, 0.6, 1.2) 1;
+  z-index: 13;
+}
+
+@keyframes robot-hop {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  30% { transform: translate(-50%, -70%) scale(1.15); }
+  60% { transform: translate(-50%, -90%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.robot-map-confirm-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(44, 62, 80, 0.45);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.robot-map-confirm-content {
+  background: #fff;
+  border-radius: 1.2rem;
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  text-align: center;
+  min-width: 320px;
+  z-index: 101;
+}
+
+.robot-map-confirm-content button {
+  margin: 0 1.2rem;
+  padding: 0.7rem 2.2rem;
+  border-radius: 0.7rem;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #00c853;
+  color: #fff;
+  transition: background 0.2s;
+}
+
+.robot-map-confirm-content button.cancel {
+  background: #e53935;
+}
+
+.robot-map-assignment-btn {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  z-index: 50;
+  background: #232428;
+  color: #fff;
+  border: none;
+  border-radius: 1.2rem;
+  padding: 0.7rem 2.2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: background 0.2s;
+}
+.robot-map-assignment-btn.active {
+  background: #00c853;
+  color: #fff;
+}
+
+.robot-map-assignment-btn:hover {
+  background: #00c853;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Add Oxanium font to all selectors in this file */
+.robot-map, .map-container, .map-grid, .warehouse-map-img, .robot-marker, .robot-marker.home, .map-controls, .clicked-point, .robot-map-assignment-overlay, .robot-map-assignment-instructions, .robot-marker.assignment-highlight, .robot-marker.assignment-hop, .robot-map-confirm-popup, .robot-map-confirm-content, .robot-map-assignment-btn, .robot-map-assignment-btn.active, .robot-map-assignment-btn:hover, .home-dot {
+  font-family: 'Oxanium', sans-serif !important;
+}

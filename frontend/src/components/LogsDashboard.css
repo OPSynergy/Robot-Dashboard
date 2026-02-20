@@ -1,0 +1,132 @@
+.logs-dashboard {
+  background: #f6f8fa;
+  color: #222;
+  min-height: 100vh;
+  padding: 1.5rem;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+
+.logs-metrics-cards {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.logs-metric-card {
+  flex: 1 1 12rem;
+  min-width: 12rem;
+  border-radius: 0.9rem;
+  padding: 1.2rem 1rem 1rem 1rem;
+  background: #232837;
+  box-shadow: 0 0.13rem 0.53rem rgba(0,0,0,0.06);
+  border: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.logs-metric-card:hover {
+  box-shadow: 0 4px 16px rgba(52, 144, 220, 0.10);
+  border: 1px solid #b3d4fc;
+}
+.logs-metric-label {
+  margin-top: 10px;
+  font-size: 1.08rem;
+  color: #6b7280;
+}
+.logs-metric-value {
+  margin-top: 6px;
+  font-size: 1.45rem;
+  font-weight: 600;
+}
+
+.logs-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 28px;
+}
+
+.logs-chart-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 10px 8px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+.logs-chart-card:hover {
+  box-shadow: 0 4px 16px rgba(52, 144, 220, 0.10);
+  border: 1px solid #b3d4fc;
+}
+.logs-chart-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 1024px) {
+  .logs-metrics-cards {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .logs-metric-card {
+    min-width: 10rem;
+    font-size: 0.95rem;
+    padding: 1rem 0.7rem 0.7rem 0.7rem;
+  }
+}
+@media (max-width: 600px) {
+  .logs-dashboard {
+    padding: 0.7rem;
+  }
+  .logs-metrics-cards {
+    gap: 0.5rem;
+  }
+  .logs-metric-card {
+    min-width: 8rem;
+    font-size: 0.9rem;
+    padding: 0.7rem 0.5rem 0.5rem 0.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .logs-metrics-cards {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .logs-charts-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+} 
+
+.logs-top-btn {
+  background: #232837;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.2s, color 0.2s;
+}
+
+.logs-top-btn:hover, .logs-top-btn:focus {
+  background: #3366ff;
+  color: #fff;
+}
+
+.logs-top-btn.active {
+  background: #3366ff;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(51,102,255,0.12);
+} 

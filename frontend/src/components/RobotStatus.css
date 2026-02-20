@@ -1,0 +1,232 @@
+.robot-status-panel {
+  width: 25vw;
+  min-width: 12rem;
+  max-width: 28rem;
+  background: #fff;
+  border-radius: 0.7rem;
+  box-shadow: 0 0.13rem 0.53rem rgba(0,0,0,0.07);
+  padding: 1.4rem 1.1rem 1.1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  margin-right: 0.5rem;
+  overflow-x: hidden;
+}
+.robot-status-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.7rem;
+}
+.robot-id {
+  background: #e6f7ff;
+  color: #007bff;
+  border-radius: 0.4rem;
+  padding: 0.15rem 0.7rem;
+  font-size: 0.95rem;
+}
+.robot-status-details {
+  font-size: 1rem;
+  margin-bottom: 1.1rem;
+}
+.value {
+  font-weight: 500;
+  color: #007bff;
+}
+.battery-bar {
+  width: 100%;
+  height: 0.5rem;
+  background: #e9ecef;
+  border-radius: 0.25rem;
+  margin: 0.4rem 0 0.5rem 0;
+}
+.battery-fill {
+  height: 100%;
+  background: #28a745;
+  border-radius: 0.25rem;
+}
+.mission-status {
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  padding: 0.7rem 0.7rem 0.4rem 0.7rem;
+}
+.mission-header {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+}
+.current-task {
+  font-size: 0.98rem;
+  margin-bottom: 0.5rem;
+}
+.recent-missions {
+  max-height: 5rem;
+  overflow-y: auto;
+}
+.mission-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.97rem;
+  margin-bottom: 0.25rem;
+}
+.status.completed {
+  background: #e6ffe6;
+  color: #28a745;
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.9rem;
+}
+.status.active {
+  background: #e6f7ff;
+  color: #007bff;
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.9rem;
+}
+.status.pending {
+  background: #fff3cd;
+  color: #856404;
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.9rem;
+}
+.update-status-btn {
+  margin-top: 0.7rem;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 0.3rem;
+  padding: 0.4rem 0;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+.update-status-btn:hover {
+  background: #0056b3;
+}
+.loading-spinner {
+  margin: 40px auto;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #007bff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.control-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.control-buttons button {
+    padding: 8px 12px;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.control-buttons button:hover {
+    background-color: #34495e;
+}
+
+.error-message {
+    background-color: #ff6b6b;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.status-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.status-label {
+  font-size: 0.9rem;
+  color: #222c34;
+  margin-bottom: 4px;
+}
+
+.status-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #222c34;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.robot-status h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.speed-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.speed-btn {
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #222c34;
+}
+
+.speed-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .robot-status-panel {
+    width: 100vw;
+    min-width: 0;
+    max-width: none;
+    margin-right: 0;
+    padding: 1rem 0.5rem;
+  }
+}
+@media (max-width: 600px) {
+  .robot-status-panel {
+    padding: 0.5rem 0.2rem;
+    font-size: 0.95rem;
+  }
+  .mission-header {
+    font-size: 0.95rem;
+  }
+} 

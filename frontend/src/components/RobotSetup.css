@@ -1,0 +1,508 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.robot-setup-container {
+    /* Match the dashboard content width with proper margins */
+    max-width: none; /* Remove max-width constraint */
+    width: 100%;
+    margin: 0; /* Remove auto centering */
+    padding: 0; /* Remove horizontal padding */
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 40px);
+}
+
+.robot-setup-header {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.robot-setup-header h1 {
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.add-robot-btn {
+    background: #27ae60;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s;
+}
+
+.add-robot-btn:hover {
+    background: #219a52;
+}
+
+.robot-table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    flex: 1; /* Take up remaining space */
+    display: flex;
+    flex-direction: column;
+}
+
+.robot-table {
+    width: 100%;
+    border-collapse: collapse;
+    flex: 1; /* Allow table to expand */
+}
+
+.robot-table th {
+    background: #f8f9fa;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.robot-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+
+.robot-table tr:hover {
+    background: #f8f9fa;
+}
+
+.robot-id {
+    font-weight: 500;
+    color: #3498db;
+}
+
+.robot-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.robot-status.active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.robot-status.idle {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.robot-status.maintenance {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.robot-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.edit-btn {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.edit-btn:hover {
+    background: #ffeaa7;
+}
+
+.view-btn {
+    background: #e7f3ff;
+    color: #0066cc;
+}
+
+.view-btn:hover {
+    background: #cce7ff;
+}
+
+.delete-btn {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.delete-btn:hover {
+    background: #f5c6cb;
+}
+
+.battery-level {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.battery-bar {
+    width: 60px;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.battery-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+.battery-high {
+    background: #28a745;
+}
+
+.battery-medium {
+    background: #ffc107;
+}
+
+.battery-low {
+    background: #dc3545;
+}
+
+.robot-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.robot-modal.show {
+    display: block;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.modal-close:hover {
+    color: #000;
+}
+
+.modal-title {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.toggle-btn {
+    transition: all 0.2s;
+}
+
+.toggle-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.toggle-btn.enabled {
+    background: #27ae60 !important;
+}
+
+.toggle-btn.disabled {
+    background: #e74c3c !important;
+}
+
+.toggle-btn.enabled:not(:disabled):hover {
+    background: #219a52 !important;
+}
+
+.toggle-btn.disabled:not(:disabled):hover {
+    background: #c0392b !important;
+}
+
+.notification-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.18);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.notification-popup {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  padding: 2rem 2.5rem;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.1rem;
+  color: #222;
+  font-weight: 500;
+}
+.notification-close-btn {
+  margin-top: 1.5rem;
+  background: #27ae60;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.notification-close-btn:hover {
+  background: #219150;
+}
+
+/* Confirmation Popup Styles */
+.confirm-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.18);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.confirm-popup {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  padding: 2rem 2.5rem;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.1rem;
+  color: #222;
+  font-weight: 500;
+}
+.confirm-popup h3 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+.confirm-popup p {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.confirm-buttons {
+  display: flex;
+  gap: 1rem;
+}
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+/* Toggle Switch Styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 28px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e74c3c; /* Red by default */
+  transition: 0.4s;
+  border-radius: 34px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+input:checked + .slider.enabled {
+  background-color: #27ae60; /* Green when enabled */
+}
+input:checked + .slider.enabled:before {
+  transform: translateX(20px);
+}
+input:not(:checked) + .slider.disabled {
+  background-color: #e74c3c; /* Red when disabled */
+}
+input:not(:checked) + .slider.disabled:before {
+  transform: translateX(0);
+}
+.slider.default {
+  background-color: #bbb !important;
+  cursor: not-allowed;
+}
+.slider.default:before {
+  background-color: #eee;
+}
+input:disabled + .slider {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .robot-setup-container {
+        max-width: none;
+        width: 100%;
+        margin: 0;
+        padding: 0 10px;
+    }
+    
+    .robot-setup-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .robot-table-container {
+        overflow-x: auto;
+    }
+    
+    .robot-table {
+        min-width: 800px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+}
+
+/* Large screen adjustments */
+@media (min-width: 1440px) {
+    .robot-setup-container {
+        max-width: none;
+    }
+}
+
+/* Add Oxanium font to all selectors in this file */
+.robot-setup-container, .robot-setup-header, .robot-table, .robot-table th, .robot-table td, .add-robot-btn, .robot-actions, .robot-modal, .modal-content, .modal-title, .form-group, .form-buttons, .btn, .notification-popup, .confirm-popup, .switch, .slider {
+  font-family: 'Poppins', 'Inter', 'Exo 2', 'Oxanium', 'Space Grotesk', 'Schibsted Grotesk', sans-serif !important;
+}
+
+.robot-setup-header h1, .modal-title, .add-robot-btn, .btn, .robot-table th {
+  font-weight: 600 !important;
+}

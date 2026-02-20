@@ -1,0 +1,258 @@
+.goal-interface-panel {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 22px 18px 18px 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.goal-interface-header,
+h2.goal-interface-header {
+  font-family: 'Poppins', 'Inter', 'Exo 2', 'Oxanium', 'Space Grotesk', 'Schibsted Grotesk', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: black;
+}
+
+.goal-coords-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.goal-coords-inputs input {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 4px;
+  background-color: #2c3e50; /* Dark background */
+  color: #fff; /* White text */
+}
+
+.add-goal-btn {
+  background: #3498db; /* Blue button */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.2s;
+}
+
+.add-goal-btn:hover {
+  background: #2980b9;
+}
+
+.queue-info {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  font-style: italic;
+}
+
+.goal-lists {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.goal-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 0px; /* No margin at bottom */
+  border-bottom: none; /* Removed border to eliminate space */
+  padding-bottom: 0px; /* Ensure no padding at the bottom */
+}
+
+.goal-tabs button {
+  flex: 1;
+  background: #f1f3f6; /* Inactive tab background */
+  border: none;
+  border-radius: 5px 5px 0 0;
+  padding: 8px 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #7f8c8d; /* Inactive tab text color */
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: 0; /* Remove any margin */
+}
+
+.goal-tabs button.active {
+  background: #ffffff; /* Active tab background */
+  color: #2c3e50; /* Active tab text color */
+  border-bottom: 2px solid #3498db; /* Blue underline for active tab */
+}
+
+.goal-tabs button:hover {
+  background: #e9ecef; /* Hover background */
+  color: #2c3e50;
+}
+
+.goal-list {
+  background: #f8f9fa;
+  border-radius: 0 0 8px 8px;
+  padding: 8px 6px; /* Reset to original padding */
+  margin-top: 0; /* Ensure no top margin */
+}
+
+.goal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  font-size: 0.95rem;
+  color: #555;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+/* Current goal styling - Green */
+.goal-item.current {
+  border-left-color: #28a745;
+  background-color: #f8fff8;
+  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.15);
+}
+
+/* Queued goal styling - Red */
+.goal-item.queued {
+  border-left-color: #dc3545;
+  background-color: #fff8f8;
+  box-shadow: 0 1px 3px rgba(220, 53, 69, 0.15);
+}
+
+/* Completed goal styling - Default */
+.goal-item.completed {
+  border-left-color: #6c757d;
+  background-color: #f8f9fa;
+}
+
+.goal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.goal-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.queue-position {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #666;
+}
+
+.goal-item.current .queue-position {
+  color: #28a745;
+  animation: pulse 2s infinite;
+}
+
+.goal-item.queued .queue-position {
+  color: #dc3545;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.goal-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status.active {
+  background: #ffe6e6;
+  color: #dc3545;
+  border-radius: 5px;
+  padding: 1px 8px;
+  font-size: 0.9rem;
+}
+
+.status.completed {
+  background: #e9ecef;
+  color: #6c757d;
+  border-radius: 5px;
+  padding: 1px 8px;
+  font-size: 0.9rem;
+}
+
+.status.current {
+  background: #d4edda;
+  color: #28a745;
+  border-radius: 5px;
+  padding: 1px 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.status.queued {
+  background: #f8d7da;
+  color: #dc3545;
+  border-radius: 5px;
+  padding: 1px 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.goal-action-btn {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.goal-action-btn:hover {
+  background: #218838;
+}
+
+.goal-action-btn.start {
+  background: #ffc107;
+  color: #212529;
+}
+
+.goal-action-btn.start:hover {
+  background: #e0a800;
+}
+
+.goal-action-btn.complete {
+  background: #28a745;
+}
+
+.goal-action-btn.complete:hover {
+  background: #218838;
+}
+
+.goal-action-btn.delete {
+  background: #dc3545;
+}
+
+.goal-action-btn.delete:hover {
+  background: #a71d2a;
+}
+
+.add-goal-section h3 {
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 1rem;
+}

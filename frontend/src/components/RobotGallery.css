@@ -1,0 +1,153 @@
+.robot-gallery-container {
+  padding: 2rem 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.robot-gallery-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #222c34;
+  text-align: left;
+}
+
+.robot-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2.5rem;
+  justify-items: center;
+  align-items: center;
+}
+
+@media (min-width: 1200px) {
+  .robot-gallery-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .robot-gallery-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+.robot-card {
+  background: #2d3340;
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+  min-width: 220px;
+  min-height: 220px;
+  max-width: 320px;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+.robot-card:hover {
+  box-shadow: 0 8px 32px rgba(52, 144, 220, 0.18);
+  transform: translateY(-4px) scale(1.03);
+}
+.robot-image-wrapper {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  background: none;
+  border-radius: 0;
+}
+.robot-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.7rem;
+  transition: transform 0.2s;
+}
+.robot-card:hover .robot-image {
+  transform: scale(1.05);
+}
+.robot-info {
+  width: 100%;
+  text-align: center;
+}
+.robot-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  letter-spacing: 0.01em;
+}
+.status-warehouse {
+  color: #FFA726;
+  font-weight: 700;
+  background: none;
+  font-size: 1.1rem;
+}
+.status-delivery {
+  color: #42A5F5;
+  font-weight: 700;
+  background: none;
+  font-size: 1.1rem;
+}
+.status-security {
+  color: #00E676;
+  font-weight: 700;
+  background: none;
+  font-size: 1.1rem;
+}
+.status-cleaning {
+  color: #AB47BC;
+  font-weight: 700;
+  background: none;
+  font-size: 1.1rem;
+}
+.robot-status-badge {
+  display: block;
+  border-radius: 1rem;
+  margin-top: 0.2rem;
+  background: none;
+}
+/* Apply the new font stack to Robot Control UI */
+.robot-control, .robot-control * {
+  font-family: 'Poppins', 'Inter', 'Exo 2', 'Oxanium', 'Space Grotesk', 'Schibsted Grotesk', sans-serif !important;
+  font-weight: 600 !important;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+@media (max-width: 600px) {
+  .robot-gallery-container {
+    padding: 1rem 0.2rem;
+  }
+  .robot-gallery-title {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  .robot-gallery-grid {
+    gap: 1.5rem;
+  }
+  .robot-card {
+    padding: 1.5rem 0.5rem 0.5rem 0.5rem;
+    min-height: 180px;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .robot-image-wrapper {
+    height: 70px;
+    margin-bottom: 1rem;
+  }
+} 

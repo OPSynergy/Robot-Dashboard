@@ -1,0 +1,177 @@
+.fleet-management-container {
+  background: #fff;
+  border-radius: 0.7rem;
+  box-shadow: 0 0.13rem 0.53rem rgba(0,0,0,0.07);
+  padding: 1.4rem 1.1rem 1.1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.fleet-robots-bar {
+  display: flex;
+  flex-direction: row;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.fleet-robots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fleet-robot-card {
+  background: #f8f9fa;
+  border-radius: 0.7rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  min-width: 180px;
+  max-width: 220px;
+  flex-shrink: 0;
+  border: 1px solid #e0e0e0;
+}
+
+.fleet-robot-card-v2 {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 18px 18px 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.fleet-robot-tile {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  max-width: 90px;
+  min-height: 80px;
+  padding: 0.6rem 0.2rem;
+}
+
+.fleet-robot-icon {
+  font-size: 1.6rem;
+  margin: 0 0 0.3rem 0;
+}
+
+.fleet-robot-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.fleet-robot-id {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0;
+}
+
+.fleet-robot-worktype {
+  font-size: 0.95rem;
+  color: #888;
+}
+
+.fleet-robot-battery, .fleet-robot-speed {
+  font-size: 0.95rem;
+  color: #444;
+  margin-top: 2px;
+}
+
+.fleet-robot-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-bottom: 0.3rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fleet-robot-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.fleet-robot-type {
+  font-size: 0.95rem;
+  color: #888;
+}
+
+.fleet-robot-status-icons {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fleet-robot-battery-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.fleet-robot-battery-bar-bg {
+  flex: 1;
+  height: 7px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fleet-robot-battery-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+.fleet-robot-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.97rem;
+  color: #444;
+  margin-bottom: 4px;
+}
+
+.fleet-robot-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.fleet-robot-action-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 18px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.fleet-robot-action-btn.control {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.fleet-robot-action-btn.add {
+  background: #4ade80;
+  color: #fff;
+}
+
+.fleet-robot-action-btn.remove {
+  background: #f87171;
+  color: #fff;
+} 
