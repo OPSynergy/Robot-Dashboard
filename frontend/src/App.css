@@ -308,13 +308,15 @@ html, body, #root, p, span, div, label, a, li, td, th, button, input, textarea, 
 /* Dashboard content grid */
 .dashboard-content {
   display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 1rem;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
   flex: 1;
   overflow: hidden;
-  height: calc(100vh - 100px);
-  max-height: calc(100vh - 100px);
-  padding-bottom: 0.8rem;
+  height: calc(100vh - 90px);
+  max-height: calc(100vh - 90px);
+  padding-top: 12px;
+  padding-bottom: 0;
+  padding-left: 0;
 }
 
 .dashboard-content > div {
@@ -365,35 +367,37 @@ html, body, #root, p, span, div, label, a, li, td, th, button, input, textarea, 
 
 /* Robot Map styles */
 .robot-map {
-  flex: 1;
   min-width: 0;
   min-height: 0;
-  width: 100%;
+  width: auto;
   height: 100%;
   max-height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 12px;
   box-sizing: border-box;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  max-width: none;
   margin: 0;
   overflow: hidden;
 }
 
 .robot-map h2 {
-  padding-left: 0px;
-  margin-top: 10px;
-  margin-bottom: 12px;
-  font-size: 1.2rem;
+  padding-left: 0;
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .map-container {
   position: relative;
   flex: 1;
-  margin-top: 8px;
+  margin-top: 0;
   overflow: hidden;
   width: 100%;
   padding: 0;
@@ -464,10 +468,10 @@ html, body, #root, p, span, div, label, a, li, td, th, button, input, textarea, 
 
 /* Goal Interface styles */
 .goal-interface {
-  max-width: 280px; /* Reduced from 340px */
+  max-width: none;
   min-width: 200px;
   width: 100%;
-  flex: 0 0 280px;
+  flex: 1;
   overflow: hidden;
   background-color: white;
   border-radius: 8px;

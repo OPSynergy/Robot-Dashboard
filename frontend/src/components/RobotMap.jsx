@@ -190,14 +190,6 @@ const RobotMap = ({ robots = [], robotPositions = {}, showMultipleRobots = false
           </div>
         </div>
       )}
-      <h2>
-        Robot Map
-        {FEATURES.ENABLE_WEBSOCKET && (
-          isWsConnected ? 
-            <span style={{ color: 'green', fontSize: '12px', marginLeft: '10px' }}>● Connected</span> :
-            <span style={{ color: 'red', fontSize: '12px', marginLeft: '10px' }}>● Disconnected</span>
-        )}
-      </h2>
       {/* Current Task Display */}
       {currentTask && (
         <div className="current-task-bar" style={{ 
