@@ -22,29 +22,74 @@ function useRealtimeDataAnalytics() {
     ],
   });
 
+  // Simulate data for demo purposes
+  useEffect(() => {
+    let batteryBase = 85;
+    let tempBase = 35;
+
+    const simulateData = () => {
+      const now = new Date();
+      const timeLabel = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      
+      // Simulate battery fluctuation (slow discharge/charge cycle)
+      batteryBase += (Math.random() - 0.52) * 2;
+      batteryBase = Math.max(20, Math.min(100, batteryBase));
+      
+      // Simulate temperature fluctuation
+      tempBase += (Math.random() - 0.5) * 3;
+      tempBase = Math.max(25, Math.min(55, tempBase));
+
+      setData(prev => ({
+        ...prev,
+        batteryTrend: [...prev.batteryTrend, { time: timeLabel, value: parseFloat(batteryBase.toFixed(1)) }].slice(-20),
+        temperatureTrend: [...prev.temperatureTrend, { time: timeLabel, value: parseFloat(tempBase.toFixed(1)) }].slice(-20),
+        totalActivityData: [
+          { name: 'On Mission', value: 18.5 + (Math.random() - 0.5) * 2, color: '#3366ff' },
+          { name: 'On Charging', value: 2.93 + (Math.random() - 0.5) * 0.5, color: '#22c55e' },
+          { name: 'At home/Idle', value: 2.7 + (Math.random() - 0.5) * 0.5, color: '#fbbf24' },
+        ],
+      }));
+    };
+
+    // Generate initial data points
+    for (let i = 0; i < 10; i++) {
+      simulateData();
+    }
+
+    const interval = setInterval(simulateData, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Also try MQTT if enabled
   useEffect(() => {
     if (!FEATURES.ENABLE_MQTT) return;
-    const client = mqtt.connect(MQTT_WS_URL, {
-      keepalive: DEFAULT_CONFIG.MQTT_KEEP_ALIVE,
-      reconnectPeriod: DEFAULT_CONFIG.MQTT_RECONNECT_PERIOD,
-      clientId: `analytics-dashboard-${Math.random().toString(16).slice(2, 8)}`
-    });
-    client.on('connect', () => {
-      client.subscribe(MQTT_TOPICS.BATTERY);
-      client.subscribe(MQTT_TOPICS.TEMPERATURE);
-    });
-    client.on('message', (topic, message) => {
-      if (topic === MQTT_TOPICS.BATTERY) {
-        const battery = Number(message.toString());
-        setData(prev => ({ ...prev, batteryTrend: [...prev.batteryTrend, { time: Date.now(), value: battery }].slice(-30) }));
-      } else if (topic === MQTT_TOPICS.TEMPERATURE) {
-        const temperature = Number(message.toString());
-        setData(prev => ({ ...prev, temperatureTrend: [...prev.temperatureTrend, { time: Date.now(), value: temperature }].slice(-30) }));
-      }
-    });
-    return () => {
-      client.end(true);
-    };
+    try {
+      const client = mqtt.connect(MQTT_WS_URL, {
+        keepalive: DEFAULT_CONFIG.MQTT_KEEP_ALIVE,
+        reconnectPeriod: DEFAULT_CONFIG.MQTT_RECONNECT_PERIOD,
+        clientId: `analytics-dashboard-${Math.random().toString(16).slice(2, 8)}`
+      });
+      client.on('connect', () => {
+        client.subscribe(MQTT_TOPICS.BATTERY);
+        client.subscribe(MQTT_TOPICS.TEMPERATURE);
+      });
+      client.on('message', (topic, message) => {
+        const now = new Date();
+        const timeLabel = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (topic === MQTT_TOPICS.BATTERY) {
+          const battery = Number(message.toString());
+          setData(prev => ({ ...prev, batteryTrend: [...prev.batteryTrend, { time: timeLabel, value: battery }].slice(-20) }));
+        } else if (topic === MQTT_TOPICS.TEMPERATURE) {
+          const temperature = Number(message.toString());
+          setData(prev => ({ ...prev, temperatureTrend: [...prev.temperatureTrend, { time: timeLabel, value: temperature }].slice(-20) }));
+        }
+      });
+      return () => {
+        client.end(true);
+      };
+    } catch (e) {
+      console.warn('MQTT connection failed, using simulated data');
+    }
   }, []);
 
   return data;

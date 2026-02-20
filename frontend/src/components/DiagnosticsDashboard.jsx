@@ -18,76 +18,149 @@ const accentGray = '#6b7280';
 
 function useRealtimeDataDiagnostics() {
   const [data, setData] = useState({
-    battery: 0,
-    speed: 0,
-    temperature: 0,
-    sensors: { Lidar: 0, Camera: 0, Ultrasonic: 0 },
-    position: { x: 0, y: 0 },
+    battery: 85,
+    speed: 1.2,
+    temperature: 38,
+    sensors: { Lidar: 450, Camera: 30, Ultrasonic: 120 },
+    position: { x: 150, y: 200 },
     speedTrend: [],
     positionPath: [],
     sensorReadings: [],
-    sensorStatus: []
+    sensorStatus: [
+      { name: 'LiDAR', value: 450 },
+      { name: 'Ultrasonic', value: 120 },
+      { name: 'Camera', value: 30 }
+    ]
   });
 
+  // Simulate data for demo purposes
+  useEffect(() => {
+    let battery = 85;
+    let speed = 1.2;
+    let temperature = 38;
+    let posX = 150;
+    let posY = 200;
+    let direction = { x: 1, y: 1 };
+
+    const simulateData = () => {
+      const now = new Date();
+      const timeLabel = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      // Simulate battery (slow discharge)
+      battery += (Math.random() - 0.52) * 0.5;
+      battery = Math.max(15, Math.min(100, battery));
+
+      // Simulate speed fluctuation
+      speed += (Math.random() - 0.5) * 0.3;
+      speed = Math.max(0, Math.min(3, speed));
+
+      // Simulate temperature
+      temperature += (Math.random() - 0.5) * 2;
+      temperature = Math.max(25, Math.min(60, temperature));
+
+      // Simulate position movement (robot moving around)
+      posX += direction.x * (Math.random() * 10 + 2);
+      posY += direction.y * (Math.random() * 8 + 2);
+      
+      // Bounce off boundaries
+      if (posX > 400 || posX < 50) direction.x *= -1;
+      if (posY > 350 || posY < 50) direction.y *= -1;
+      posX = Math.max(50, Math.min(400, posX));
+      posY = Math.max(50, Math.min(350, posY));
+
+      // Simulate sensor readings
+      const lidar = Math.floor(400 + Math.random() * 200);
+      const ultrasonic = Math.floor(80 + Math.random() * 100);
+      const camera = Math.floor(25 + Math.random() * 15);
+
+      setData(prev => ({
+        battery: parseFloat(battery.toFixed(1)),
+        speed: parseFloat(speed.toFixed(2)),
+        temperature: parseFloat(temperature.toFixed(1)),
+        sensors: { Lidar: lidar, Camera: camera, Ultrasonic: ultrasonic },
+        position: { x: Math.round(posX), y: Math.round(posY) },
+        speedTrend: [...prev.speedTrend, { time: timeLabel, value: parseFloat(speed.toFixed(2)) }].slice(-20),
+        positionPath: [...prev.positionPath, { x: Math.round(posX), y: Math.round(posY) }].slice(-30),
+        sensorReadings: [...prev.sensorReadings, { time: timeLabel, lidar, ultrasonic }].slice(-20),
+        sensorStatus: [
+          { name: 'LiDAR', value: lidar },
+          { name: 'Ultrasonic', value: ultrasonic },
+          { name: 'Camera', value: camera }
+        ]
+      }));
+    };
+
+    // Generate initial data points
+    for (let i = 0; i < 10; i++) {
+      simulateData();
+    }
+
+    const interval = setInterval(simulateData, 1500);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Also try MQTT if enabled
   useEffect(() => {
     if (!FEATURES.ENABLE_MQTT) return;
-    const client = mqtt.connect(MQTT_WS_URL, {
-      keepalive: DEFAULT_CONFIG.MQTT_KEEP_ALIVE,
-      reconnectPeriod: DEFAULT_CONFIG.MQTT_RECONNECT_PERIOD,
-      clientId: `diagnostics-dashboard-${Math.random().toString(16).slice(2, 8)}`
-    });
-    client.on('connect', () => {
-      client.subscribe(MQTT_TOPICS.SPEED);
-      client.subscribe(MQTT_TOPICS.BATTERY);
-      client.subscribe(MQTT_TOPICS.POSITION);
-      client.subscribe(MQTT_TOPICS.TEMPERATURE);
-      client.subscribe(MQTT_TOPICS.SENSORS);
-    });
-    client.on('message', (topic, message) => {
-      if (topic === MQTT_TOPICS.SPEED) {
-        const speed = Number(message.toString());
-        setData(prev => ({ ...prev, speed, speedTrend: [...prev.speedTrend, { time: Date.now(), value: speed }].slice(-30) }));
-      } else if (topic === MQTT_TOPICS.BATTERY) {
-        const battery = Number(message.toString());
-        setData(prev => ({ ...prev, battery }));
-      } else if (topic === MQTT_TOPICS.POSITION) {
-        try {
-          const pos = JSON.parse(message.toString());
-          setData(prev => {
-            const newPosition = { x: pos.x, y: pos.y };
-            const newPositionPath = [...prev.positionPath, newPosition].slice(-30);
-            return { ...prev, position: newPosition, positionPath: newPositionPath };
-          });
-        } catch (e) {}
-      } else if (topic === MQTT_TOPICS.TEMPERATURE) {
-        const temperature = Number(message.toString());
-        setData(prev => ({ ...prev, temperature }));
-      } else if (topic === MQTT_TOPICS.SENSORS) {
-        try {
-          const sensors = JSON.parse(message.toString());
-          setData(prev => ({
-            ...prev,
-            sensors,
-            sensorReadings: [
-              ...prev.sensorReadings,
-              {
-                time: Date.now(),
-                lidar: sensors.Lidar,
-                ultrasonic: sensors.Ultrasonic
-              }
-            ].slice(-30),
-            sensorStatus: [
-              { name: 'LiDAR', value: sensors.Lidar },
-              { name: 'Ultrasonic', value: sensors.Ultrasonic },
-              { name: 'Camera', value: sensors.Camera }
-            ]
-          }));
-        } catch (e) {}
-      }
-    });
-    return () => {
-      client.end(true);
-    };
+    try {
+      const client = mqtt.connect(MQTT_WS_URL, {
+        keepalive: DEFAULT_CONFIG.MQTT_KEEP_ALIVE,
+        reconnectPeriod: DEFAULT_CONFIG.MQTT_RECONNECT_PERIOD,
+        clientId: `diagnostics-dashboard-${Math.random().toString(16).slice(2, 8)}`
+      });
+      client.on('connect', () => {
+        client.subscribe(MQTT_TOPICS.SPEED);
+        client.subscribe(MQTT_TOPICS.BATTERY);
+        client.subscribe(MQTT_TOPICS.POSITION);
+        client.subscribe(MQTT_TOPICS.TEMPERATURE);
+        client.subscribe(MQTT_TOPICS.SENSORS);
+      });
+      client.on('message', (topic, message) => {
+        const now = new Date();
+        const timeLabel = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (topic === MQTT_TOPICS.SPEED) {
+          const speed = Number(message.toString());
+          setData(prev => ({ ...prev, speed, speedTrend: [...prev.speedTrend, { time: timeLabel, value: speed }].slice(-20) }));
+        } else if (topic === MQTT_TOPICS.BATTERY) {
+          const battery = Number(message.toString());
+          setData(prev => ({ ...prev, battery }));
+        } else if (topic === MQTT_TOPICS.POSITION) {
+          try {
+            const pos = JSON.parse(message.toString());
+            setData(prev => {
+              const newPosition = { x: pos.x, y: pos.y };
+              const newPositionPath = [...prev.positionPath, newPosition].slice(-30);
+              return { ...prev, position: newPosition, positionPath: newPositionPath };
+            });
+          } catch (e) {}
+        } else if (topic === MQTT_TOPICS.TEMPERATURE) {
+          const temperature = Number(message.toString());
+          setData(prev => ({ ...prev, temperature }));
+        } else if (topic === MQTT_TOPICS.SENSORS) {
+          try {
+            const sensors = JSON.parse(message.toString());
+            setData(prev => ({
+              ...prev,
+              sensors,
+              sensorReadings: [
+                ...prev.sensorReadings,
+                { time: timeLabel, lidar: sensors.Lidar, ultrasonic: sensors.Ultrasonic }
+              ].slice(-20),
+              sensorStatus: [
+                { name: 'LiDAR', value: sensors.Lidar },
+                { name: 'Ultrasonic', value: sensors.Ultrasonic },
+                { name: 'Camera', value: sensors.Camera }
+              ]
+            }));
+          } catch (e) {}
+        }
+      });
+      return () => {
+        client.end(true);
+      };
+    } catch (e) {
+      console.warn('MQTT connection failed, using simulated data');
+    }
   }, []);
 
   return data;
