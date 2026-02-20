@@ -687,7 +687,7 @@
     return (
       <div className="dashboard-root">
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} onSectionChange={setDashboardTitle} />
-        <div className="dashboard-main" style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <div className="dashboard-main">
           <DashboardHeader
             isSidebarOpen={isSidebarOpen}
             setIsSidebarOpen={setIsSidebarOpen}
@@ -697,9 +697,7 @@
             title={dashboardTitle}
             onEStop={() => {}}
           />
-          <div style={{ padding: 0, background: '#f7f7fa', flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <RobotSetup />
-          </div>
+          <RobotSetup />
         </div>
       </div>
     );

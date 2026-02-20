@@ -298,36 +298,28 @@ const RobotSetup = ({ onRobotSetupChange }) => {
     };
 
     return (
-        <div className="robot-setup-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%' , paddingLeft: 70}}>
-            <div className="robot-setup-header">
-                <h1 style={{
-                  fontFamily: "'Poppins', 'Inter', 'Exo 2', 'Oxanium', 'Space Grotesk', 'Schibsted Grotesk', sans-serif",
-                  fontWeight: 600,
-                  fontOpticalSizing: 'auto',
-                  fontStyle: 'normal',
-                }}>Robot Setup</h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginLeft: 'auto' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        {robots.map((robot) => (
-                            <span key={`avatar-${robot.id}`} style={{ display: 'inline-block', width: 32, height: 32, textAlign: 'center' }}>
-                                {robot.icon ? (
-                                    <img src={robot.icon} alt="icon" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1px solid #eee', display: 'block', margin: '0 auto' }} />
-                                ) : robot.name === 'OP' ? (
-                                    <img src={robot2} alt="icon" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1px solid #eee', display: 'block', margin: '0 auto' }} />
-                                ) : (
-                                    <span role="img" aria-label="robot" style={{ fontSize: 26, display: 'block', margin: '0 auto' }}>🤖</span>
-                                )}
-                            </span>
-                        ))}
-                    </div>
-                    <span style={{ fontWeight: 600, fontSize: '1.1rem', color: '#222' }}>
-                        Total: {robotCount}
-                    </span>
-                    <button className="add-robot-btn" onClick={() => openModal()}>
-                        <span>+</span>
-                        Add New Robot
-                    </button>
+        <div className="robot-setup-container">
+            <div className="robot-setup-toolbar">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {robots.map((robot) => (
+                        <span key={`avatar-${robot.id}`} style={{ display: 'inline-block', width: 32, height: 32, textAlign: 'center' }}>
+                            {robot.icon ? (
+                                <img src={robot.icon} alt="icon" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1px solid #eee', display: 'block', margin: '0 auto' }} />
+                            ) : robot.name === 'OP' ? (
+                                <img src={robot2} alt="icon" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1px solid #eee', display: 'block', margin: '0 auto' }} />
+                            ) : (
+                                <span role="img" aria-label="robot" style={{ fontSize: 26, display: 'block', margin: '0 auto' }}>🤖</span>
+                            )}
+                        </span>
+                    ))}
                 </div>
+                <span style={{ fontWeight: 600, fontSize: '1rem', color: '#555' }}>
+                    Total: {robotCount}
+                </span>
+                <button className="add-robot-btn" onClick={() => openModal()}>
+                    <span>+</span>
+                    Add New Robot
+                </button>
             </div>
 
             <div className="robot-table-container">
