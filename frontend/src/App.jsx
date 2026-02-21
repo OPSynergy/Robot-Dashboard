@@ -269,10 +269,11 @@
       }
     };
 
-    const handleCancelGoal = async () => {
+    const handleCancelGoal = async (robotId = null) => {
       try {
-        await axios.post(`${API_BASE_URL}/goal/cancel`);
-        console.log('Goal cancelled successfully');
+        const rid = robotId || (Object.keys(wsData.robots || {})[0]) || 'r1';
+        await axios.post(`${API_BASE_URL}/goal/cancel`, { robot_id: rid });
+        console.log('Goal cancelled successfully, robot stopped');
       } catch (error) {
         console.error('Error cancelling goal:', error);
       }
@@ -438,28 +439,29 @@
               </div>
             } />
             <Route path="/missions" element={
-              <div className="dashboard-content missions" style={{paddingLeft:70}}>
-                <div className="robot-status">
+              <div className="dashboard-content missions" style={{paddingLeft: 0, paddingTop: 12}}>
+                <div className="robot-status" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                   <h2 style={{
-                    fontSize: '1.5rem',
+                    fontSize: '1.3rem',
                     fontWeight: 600,
                     color: '#000',
-                    marginBottom: '20px',
+                    marginBottom: '16px',
+                    marginTop: 0,
                     display: 'flex',
                     alignItems: 'center',
                     textAlign: 'left',
                     fontFamily: "'Poppins', 'Inter', 'Exo 2', 'Oxanium', 'Space Grotesk', 'Schibsted Grotesk', sans-serif",
                     fontOpticalSizing: 'auto',
                     fontStyle: 'normal',
-                  }}>Mission Control</h2>
-                  <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '18px', marginBottom: '16px' }}>
+                  }}>MISSION CONTROL</h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'stretch', gap: '10px', marginBottom: '16px' }}>
                     <button
                       style={{
                         background: '#232428',
                         border: 'none',
-                        borderRadius: '16px',
-                        width: '140px',
-                        height: '64px',
+                        borderRadius: '12px',
+                        width: '100%',
+                        height: '48px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -468,10 +470,12 @@
                         boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
                         color: '#fff',
                         fontWeight: 600,
-                        fontSize: '1.1rem',
+                        fontSize: '0.95rem',
                       }}
                       onClick={async () => {
-                        await handleAddGoal(400, 300, wsData.position[0]); // Pass robotId if available
+                        const robotIds = Object.keys(wsData.robots || {});
+                        const robotId = robotIds.length > 0 ? robotIds[0] : 'r1';
+                        await handleAddGoal(50, 50, robotId);
                       }}
                     >
                       Home
@@ -480,9 +484,9 @@
                       style={{
                         background: '#232428',
                         border: 'none',
-                        borderRadius: '16px',
-                        width: '140px',
-                        height: '64px',
+                        borderRadius: '12px',
+                        width: '100%',
+                        height: '48px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -491,21 +495,29 @@
                         boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
                         color: '#fff',
                         fontWeight: 600,
-                        fontSize: '1.1rem',
+                        fontSize: '0.95rem',
                       }}
                       onClick={async () => {
+                        const robotIds = Object.keys(wsData.robots || {});
+                        const robotId = robotIds.length > 0 ? robotIds[0] : 'r1';
+                        const robotData = wsData.robots?.[robotId];
+                        const originalPosition = robotData?.position 
+                          ? { x: robotData.position[0], y: robotData.position[1] } 
+                          : { x: 150, y: 200 };
+                        
                         const patrolRoute = [
-                          { x: 50, y: 50 },    // Bottom-left
-                          { x: 50, y: 350 },   // Top-left
-                          { x: 375, y: 350 },  // Top-center
-                          { x: 700, y: 350 },  // Top-right
-                          { x: 700, y: 200 },  // Right-center
-                          { x: 700, y: 100 },  // Bottom-right
-                          { x: 375, y: 50 },   // Bottom-center
-                          { x: 50, y: 50 },    // Return to start
+                          { x: 120, y: 120 },
+                          { x: 120, y: 280 },
+                          { x: 200, y: 280 },
+                          { x: 280, y: 280 },
+                          { x: 280, y: 200 },
+                          { x: 280, y: 120 },
+                          { x: 200, y: 120 },
+                          originalPosition,
                         ];
+                        
                         for (const point of patrolRoute) {
-                          await handleAddGoal(point.x, point.y, wsData.position[0]); // Pass robotId if available
+                          await handleAddGoal(point.x, point.y, robotId);
                           await new Promise(res => setTimeout(res, 700));
                         }
                       }}
@@ -514,11 +526,11 @@
                     </button>
                     <button
                       style={{
-                        background: '#232428',
+                        background: showWaypointEditor ? '#27ae60' : '#232428',
                         border: 'none',
-                        borderRadius: '16px',
-                        width: '140px',
-                        height: '64px',
+                        borderRadius: '12px',
+                        width: '100%',
+                        height: '48px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -527,21 +539,20 @@
                         boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
                         color: '#fff',
                         fontWeight: 600,
-                        fontSize: '1.1rem',
+                        fontSize: '0.95rem',
                       }}
                       onClick={() => setShowWaypointEditor((v) => !v)}
                     >
-                      Waypoint Editor
+                      {showWaypointEditor ? '✓ Waypoint Editor' : 'Waypoint Editor'}
                     </button>
                   </div>
                   {showWaypointEditor && (
                     <div style={{
-                      background: '#fff',
-                      borderRadius: '16px',
+                      background: '#f5f5f5',
+                      borderRadius: '12px',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                      padding: '24px 18px 18px 18px',
-                      margin: '0 auto 18px auto',
-                      maxWidth: 420,
+                      padding: '16px 12px',
+                      marginTop: '10px',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
@@ -593,36 +604,31 @@
                             setWaypointsCovered(false);
                             navigationInterruptedRef.current = false;
                             lastWaypointReachedRef.current = false;
-                            // Navigate through waypoints
+                            
+                            const robotIds = Object.keys(wsData.robots || {});
+                            const robotId = robotIds.length > 0 ? robotIds[0] : 'r1';
+                            
                             for (let i = 0; i < waypointCoords.length; i++) {
                               if (navigationInterruptedRef.current) {
                                 setWaypointActive(false);
                                 return;
                               }
-                              await handleAddGoal(waypointCoords[i].x, waypointCoords[i].y, wsData.position[0]); // Pass robotId if available
-                              // Check for interruption after each goal
+                              await handleAddGoal(waypointCoords[i].x, waypointCoords[i].y, robotId);
+                              
                               if (navigationInterruptedRef.current) {
                                 setWaypointActive(false);
                                 return;
                               }
-                              // Wait between goals, but check for interruption during wait
-                              await new Promise(res => {
-                                const checkInterruption = () => {
-                                  if (navigationInterruptedRef.current) {
-                                    res();
-                                  } else {
-                                    setTimeout(checkInterruption, 100);
-                                  }
-                                };
-                                setTimeout(checkInterruption, 100);
-                              });
-                              await new Promise(res => setTimeout(res, 600));
+                              await new Promise(res => setTimeout(res, 800));
                             }
+                            setWaypointsCovered(true);
                             setWaypointActive(false);
                           } else if (waypointActive) {
                             navigationInterruptedRef.current = true;
                             setWaypointActive(false);
-                            await handleCancelGoal();
+                            const robotIds = Object.keys(wsData.robots || {});
+                            const robotId = robotIds.length > 0 ? robotIds[0] : 'r1';
+                            await handleCancelGoal(robotId);
                           }
                         }}
                         disabled={waypointCoords.length < 2}
@@ -632,32 +638,30 @@
                     </div>
                   )}
                 </div>
-                <div className="right-column-content">
-                  <RobotMap 
-                    mapType={dashboardMapType}
-                    customMapImage={customMapImage}
-                    onAddGoal={handleAddGoal} 
-                    robotPositions={wsData.robots}
-                    wsData={wsData}
-                    isWsConnected={isWsConnected}
-                    waypointMarkers={waypointCoords}
-                    onMapClick={showWaypointEditor ? ((pt) => {
-                      if (waypointCoords.length >= pointsCount) {
-                        alert('All points are marked. No points are left.');
-                        return;
-                      }
-                      setWaypointCoords(coords => [...coords, pt]);
-                    }) : undefined}
-                    waypointMarkersColor={waypointsCovered ? 'green' : 'grey'}
-                    robots={enabledRobots}
-                    showMultipleRobots={true}
-                  />
-                  <GoalInterface 
-                    goals={wsData.robots} 
-                    onAddGoal={handleAddGoal} 
-                    onUpdateGoalStatus={handleUpdateGoalStatus} 
-                  />
-                </div>
+                <RobotMap 
+                  mapType={dashboardMapType}
+                  customMapImage={customMapImage}
+                  onAddGoal={handleAddGoal} 
+                  robotPositions={wsData.robots}
+                  wsData={wsData}
+                  isWsConnected={isWsConnected}
+                  waypointMarkers={waypointCoords}
+                  onMapClick={showWaypointEditor ? ((pt) => {
+                    if (waypointCoords.length >= pointsCount) {
+                      alert('All points are marked. No points are left.');
+                      return;
+                    }
+                    setWaypointCoords(coords => [...coords, pt]);
+                  }) : undefined}
+                  waypointMarkersColor={waypointsCovered ? 'green' : 'grey'}
+                  robots={enabledRobots}
+                  showMultipleRobots={true}
+                />
+                <GoalInterface 
+                  goals={wsData.robots} 
+                  onAddGoal={handleAddGoal} 
+                  onUpdateGoalStatus={handleUpdateGoalStatus} 
+                />
               </div>
             } />
             <Route path="/diagnostics" element={<DiagnosticsDashboard />} />

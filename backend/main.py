@@ -540,6 +540,38 @@ async def update_goal(goal: Goal):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@app.post("/goal/cancel")
+async def cancel_goal(request: Request = None):
+    try:
+        robot_id = None
+        if request:
+            try:
+                body = await request.json()
+                robot_id = body.get("robot_id")
+            except:
+                pass
+        
+        for rid, robot in robot_state["robots"].items():
+            if robot_id and rid != robot_id:
+                continue
+            
+            robot["target_goal"] = None
+            robot["currentTask"] = "Idle"
+            
+            for goal in robot["goals"]:
+                if goal["status"] == "current":
+                    goal["status"] = "cancelled"
+                    goal["time"] = datetime.now().strftime("%H:%M:%S")
+            
+            for goal in robot["goals"]:
+                if goal["status"] == "queued":
+                    goal["status"] = "cancelled"
+        
+        await broadcast_state()
+        return {"status": "success", "message": "Goals cancelled, robot stopped"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 # Robot setup endpoints
 @app.post("/robot-setup")
 async def add_robot_setup(robot: RobotSetupModel):
