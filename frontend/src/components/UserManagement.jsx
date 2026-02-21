@@ -166,7 +166,7 @@ const UserManagement = () => {
   }
 
   return (
-    <div className="user-management" style={{paddingLeft:70}}>
+    <div className="user-management">
       <div className="user-management-content">
         <div className="um-header-row">
           <h2>
