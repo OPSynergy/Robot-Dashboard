@@ -1,5 +1,6 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request, Path
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request, Path, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel
@@ -8,11 +9,16 @@ import asyncio
 import uvicorn
 import uuid
 import math
+import os
+import shutil
 from pydantic import ValidationError
 import sqlite3
 import contextlib
 import subprocess
 import time
+
+UPLOAD_DIR = "uploads/maps"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Import auth router (make sure this file exists)
 try:
@@ -54,6 +60,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Serve uploaded files statically
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 # Include auth router only if available
 if AUTH_AVAILABLE:
     app.include_router(auth_router, prefix="/auth", tags=["authentication"])
@@ -93,9 +102,17 @@ def initialize_robot_setup_db(db_path='robot_setup.db'):
         icon TEXT
     )
     ''')
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS maps (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        map_name TEXT NOT NULL,
+        map_type TEXT NOT NULL,
+        map_image TEXT NOT NULL
+    )
+    ''')
     conn.commit()
     conn.close()
-    print(f"{db_path} created and table initialized.")
+    print(f"{db_path} created and tables initialized.")
 
 class Command(BaseModel):
     type: str
@@ -123,6 +140,17 @@ class RobotSetupModel(BaseModel):
     last_updated: str
     enabled: bool = True
     icon: Optional[str] = None
+
+class MapModel(BaseModel):
+    map_name: str
+    map_type: str
+    map_image: str
+
+class MapUpdateModel(BaseModel):
+    id: int
+    map_name: Optional[str] = None
+    map_type: Optional[str] = None
+    map_image: Optional[str] = None
 
 # Robot state management
 robot_state = {
@@ -658,6 +686,149 @@ async def toggle_robot(robot_id: str):
         
         await broadcast_state()
         return {"status": "success", "message": f"Robot {robot_id} toggled successfully", "enabled": bool(new_enabled)}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Maps API endpoints
+@app.post("/maps")
+async def add_map(map_data: MapModel):
+    try:
+        conn = sqlite3.connect('robot_setup.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO maps (map_name, map_type, map_image)
+            VALUES (?, ?, ?)
+        ''', (map_data.map_name, map_data.map_type, map_data.map_image))
+        map_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        return {"status": "success", "message": "Map added successfully", "id": map_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/maps/upload")
+async def upload_map(
+    map_name: str = Form(...),
+    map_type: str = Form(...),
+    file: UploadFile = File(...)
+):
+    try:
+        file_ext = os.path.splitext(file.filename)[1]
+        unique_filename = f"{uuid.uuid4().hex}{file_ext}"
+        file_path = os.path.join(UPLOAD_DIR, unique_filename)
+        
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        map_image_url = f"/uploads/maps/{unique_filename}"
+        
+        conn = sqlite3.connect('robot_setup.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO maps (map_name, map_type, map_image)
+            VALUES (?, ?, ?)
+        ''', (map_name, map_type, map_image_url))
+        map_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        return {"status": "success", "message": "Map uploaded successfully", "id": map_id, "image_url": map_image_url}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/maps")
+def get_maps():
+    try:
+        conn = sqlite3.connect('robot_setup.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT id, map_name, map_type, map_image FROM maps')
+        rows = cursor.fetchall()
+        conn.close()
+        
+        maps = []
+        for row in rows:
+            maps.append({
+                "id": row[0],
+                "map_name": row[1],
+                "map_type": row[2],
+                "map_image": row[3]
+            })
+        return maps
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/maps/{map_id}")
+def get_map(map_id: int):
+    try:
+        conn = sqlite3.connect('robot_setup.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT id, map_name, map_type, map_image FROM maps WHERE id=?', (map_id,))
+        row = cursor.fetchone()
+        conn.close()
+        
+        if not row:
+            raise HTTPException(status_code=404, detail="Map not found")
+        
+        return {
+            "id": row[0],
+            "map_name": row[1],
+            "map_type": row[2],
+            "map_image": row[3]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put("/maps/{map_id}")
+async def update_map(map_id: int, map_data: MapUpdateModel):
+    try:
+        conn = sqlite3.connect('robot_setup.db')
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT id FROM maps WHERE id=?', (map_id,))
+        if not cursor.fetchone():
+            conn.close()
+            raise HTTPException(status_code=404, detail="Map not found")
+        
+        updates = []
+        values = []
+        if map_data.map_name is not None:
+            updates.append("map_name=?")
+            values.append(map_data.map_name)
+        if map_data.map_type is not None:
+            updates.append("map_type=?")
+            values.append(map_data.map_type)
+        if map_data.map_image is not None:
+            updates.append("map_image=?")
+            values.append(map_data.map_image)
+        
+        if updates:
+            values.append(map_id)
+            cursor.execute(f'UPDATE maps SET {", ".join(updates)} WHERE id=?', values)
+            conn.commit()
+        
+        conn.close()
+        return {"status": "success", "message": "Map updated successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/maps/{map_id}")
+async def delete_map(map_id: int):
+    try:
+        conn = sqlite3.connect('robot_setup.db')
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM maps WHERE id=?', (map_id,))
+        if cursor.rowcount == 0:
+            conn.close()
+            raise HTTPException(status_code=404, detail="Map not found")
+        conn.commit()
+        conn.close()
+        return {"status": "success", "message": "Map deleted successfully"}
     except HTTPException:
         raise
     except Exception as e:

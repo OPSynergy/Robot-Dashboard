@@ -54,6 +54,8 @@
     const reconnectTimeoutRef = useRef(null);
     const reconnectAttemptsRef = useRef(0);
     const [dashboardMapType, setDashboardMapType] = useState(() => localStorage.getItem('lastMapType') || 'storage');
+    const [customMapImage, setCustomMapImage] = useState(() => localStorage.getItem('selectedMapImage') || null);
+    const [availableMaps, setAvailableMaps] = useState([]);
     const [showMapCanvas, setShowMapCanvas] = useState(false);
     const [showWaypointEditor, setShowWaypointEditor] = useState(false);
     const [pointsCount, setPointsCount] = useState(2);
@@ -67,6 +69,31 @@
     const [enabledRobots, setEnabledRobots] = useState([]);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [dashboardTitle, setDashboardTitle] = useState('Robot Dashboard');
+
+    // Fetch available maps from database
+    useEffect(() => {
+      const fetchMaps = async () => {
+        try {
+          const res = await fetch('http://localhost:8000/maps');
+          if (!res.ok) throw new Error('Failed to fetch maps');
+          const data = await res.json();
+          setAvailableMaps(data);
+          
+          const savedMapImage = localStorage.getItem('selectedMapImage');
+          if (savedMapImage) {
+            setCustomMapImage(savedMapImage);
+          } else if (data.length > 0) {
+            setCustomMapImage(data[0].map_image);
+            localStorage.setItem('selectedMapImage', data[0].map_image);
+          }
+        } catch (err) {
+          console.error('Error fetching maps:', err);
+        }
+      };
+      fetchMaps();
+      const interval = setInterval(fetchMaps, 30000);
+      return () => clearInterval(interval);
+    }, []);
 
     // Fetch robot count from backend
     useEffect(() => {
@@ -197,6 +224,9 @@
         if (e.key === 'lastMapType') {
           setDashboardMapType(e.newValue || 'storage');
         }
+        if (e.key === 'selectedMapImage') {
+          setCustomMapImage(e.newValue || null);
+        }
       };
       window.addEventListener('storage', handleStorage);
       return () => window.removeEventListener('storage', handleStorage);
@@ -206,7 +236,9 @@
     useEffect(() => {
       const interval = setInterval(() => {
         const current = localStorage.getItem('lastMapType') || 'storage';
+        const currentMapImage = localStorage.getItem('selectedMapImage') || null;
         setDashboardMapType((prev) => (prev !== current ? current : prev));
+        setCustomMapImage((prev) => (prev !== currentMapImage ? currentMapImage : prev));
       }, 500);
       return () => clearInterval(interval);
     }, []);
@@ -298,6 +330,7 @@
           <div className="dashboard-content">
             <RobotMap 
               mapType={dashboardMapType}
+              customMapImage={customMapImage}
               onAddGoal={handleAddGoal} 
               robotPositions={wsData.robots}
               wsData={wsData}
@@ -311,7 +344,7 @@
                 setWaypointCoords(coords => [...coords, pt]);
               }) : undefined}
               waypointMarkersColor={waypointsCovered ? 'green' : 'grey'}
-              robots={enabledRobots}  // Changed from robots={[]}
+              robots={enabledRobots}
               showMultipleRobots={true}
             />
             <GoalInterface 
@@ -333,6 +366,7 @@
                 <div className="right-column-content">
                   <RobotMap 
                     mapType={dashboardMapType}
+                    customMapImage={customMapImage}
                     onAddGoal={handleAddGoal} 
                     robotPositions={wsData.robots}
                     wsData={wsData}
@@ -358,14 +392,14 @@
               </div>
             } />
             <Route path="/maps" element={<MapsHome />} />
-            <Route path="/maps/storage" element={<RobotMap mapType="storage" onAddGoal={handleAddGoal} robotPositions={wsData.robots} wsData={wsData} isWsConnected={isWsConnected} waypointMarkers={waypointCoords} onMapClick={showWaypointEditor ? ((pt) => {
+            <Route path="/maps/storage" element={<RobotMap mapType="storage" customMapImage={customMapImage} onAddGoal={handleAddGoal} robotPositions={wsData.robots} wsData={wsData} isWsConnected={isWsConnected} waypointMarkers={waypointCoords} onMapClick={showWaypointEditor ? ((pt) => {
               if (waypointCoords.length >= pointsCount) {
                 alert('All points are marked. No points are left.');
                 return;
               }
               setWaypointCoords(coords => [...coords, pt]);
             }) : undefined} robots={enabledRobots} showMultipleRobots={true} />} />
-            <Route path="/maps/delivery" element={<RobotMap mapType="delivery" onAddGoal={handleAddGoal} robotPositions={wsData.robots} wsData={wsData} isWsConnected={isWsConnected} waypointMarkers={waypointCoords} onMapClick={showWaypointEditor ? ((pt) => {
+            <Route path="/maps/delivery" element={<RobotMap mapType="delivery" customMapImage={customMapImage} onAddGoal={handleAddGoal} robotPositions={wsData.robots} wsData={wsData} isWsConnected={isWsConnected} waypointMarkers={waypointCoords} onMapClick={showWaypointEditor ? ((pt) => {
               if (waypointCoords.length >= pointsCount) {
                 alert('All points are marked. No points are left.');
                 return;
@@ -378,6 +412,7 @@
                 <div className="right-column-content">
                   <RobotMap 
                     mapType={dashboardMapType}
+                    customMapImage={customMapImage}
                     onAddGoal={handleAddGoal} 
                     robotPositions={wsData.robots}
                     wsData={wsData}
@@ -600,6 +635,7 @@
                 <div className="right-column-content">
                   <RobotMap 
                     mapType={dashboardMapType}
+                    customMapImage={customMapImage}
                     onAddGoal={handleAddGoal} 
                     robotPositions={wsData.robots}
                     wsData={wsData}

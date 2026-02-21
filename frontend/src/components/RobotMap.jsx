@@ -2,10 +2,21 @@ import React, { useEffect, useState, useRef } from 'react';
 import storageMap from '../img/storage.png';
 import deliveryMap from '../img/delivery.jpg';
 import robotMarkerImg from '../assets/robots/1.png';
-import { WS_BASE_URL, DEFAULT_CONFIG, FEATURES } from '../config';
+import { WS_BASE_URL, DEFAULT_CONFIG, FEATURES, API_BASE_URL } from '../config';
 import './RobotMap.css';
 
-const RobotMap = ({ robots = [], robotPositions = {}, showMultipleRobots = false, onAddGoal, wsData, isWsConnected, mapType = 'storage', homePosition, waypointMarkers = [], onMapClick, waypointMarkersColor = 'grey' }) => {
+const getMapImageUrl = (imagePath) => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  if (imagePath.startsWith('/uploads/')) {
+    return `${API_BASE_URL}${imagePath}`;
+  }
+  return imagePath;
+};
+
+const RobotMap = ({ robots = [], robotPositions = {}, showMultipleRobots = false, onAddGoal, wsData, isWsConnected, mapType = 'storage', customMapImage, homePosition, waypointMarkers = [], onMapClick, waypointMarkersColor = 'grey' }) => {
   const [orientation, setOrientation] = useState(0);
   const [clickedPoint, setClickedPoint] = useState(null);
   const [currentTask, setCurrentTask] = useState('');
@@ -16,13 +27,14 @@ const RobotMap = ({ robots = [], robotPositions = {}, showMultipleRobots = false
   const [assignError, setAssignError] = useState('');
   const assignmentTimeoutRef = useRef(null);
 
-  // Debug logging
-  console.log('RobotMap props:', { robots, robotPositions, showMultipleRobots });
-  console.log('Robot IDs in robots array:', robots?.map(r => r.id));
-  console.log('Robot IDs in robotPositions:', Object.keys(robotPositions || {}));
-
-  let mapImage = storageMap;
-  if (mapType === 'delivery') mapImage = deliveryMap;
+  let mapImage;
+  if (customMapImage) {
+    mapImage = getMapImageUrl(customMapImage);
+  } else if (mapType === 'delivery') {
+    mapImage = deliveryMap;
+  } else {
+    mapImage = storageMap;
+  }
 
   // Update component state when WebSocket data changes
   useEffect(() => {
